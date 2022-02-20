@@ -54,7 +54,7 @@
 
     const getAvailableDates = async ()=>{
         let users = await getAttachedUsers();
-        users.push($user.id)
+        users = [...users, $user.id]
         let avail = []
         for(let i = 0; i < users.length; i++){
             let taken_dates = await supabase.from('dates').select('date').match({user_id: users[i].user_id})
@@ -82,6 +82,5 @@
 		x
 	</button>
 	<h1 class="text-3xl text-indigo-900 relative">{event.event_name}</h1>
-    <button on:click={getAvailableDates} class="text-3xl text-indigo-900">get dates</button>
-	<h1>available dates:</h1>
+    <button on:click={getAvailableDates} class="rounded p-5 m-5 bg-fuchsia-400 text-3xl text-indigo-900">get dates</button>
 </div>
