@@ -32,14 +32,19 @@
 
 	const getDateArray = function (start, end) {
 		var arr = new Array()
-		let dt = new Date(start);
-        let enddt = new Date(end)
+		var dt = new Date(start);
+        var enddt = new Date(end)
+
+        //console.log(dt)
 
 		while (dt <= enddt) {
-			arr.push(dt);
+            console.log(dt)
+            let temp = new Date(dt)
+            console.log(temp)
+			arr.push(temp);
 			dt.setDate(dt.getDate() + 1);
 		}
-        //console.log(arr)
+        console.log(arr)
 		return arr;
 
 	};
@@ -48,28 +53,33 @@
     console.log(dateArr)
 
     const getAttachedUsers = async () => {
-        let attachedUsers = await supabase.from('user-events').select('user_id').match({event_name: event.event_name})
-        return attachedUsers;
+        let {data, error} = await supabase.from('user-events').select('user_id').match({event_name: event.event_name})
+        console.log(data)
+        return data;
     }
 
     const getAvailableDates = async ()=>{
         let users = await getAttachedUsers();
-        users = [...users, $user.id]
-        let avail = []
+        users = [...users, {'user_id' : $user.id}]
+        //console.log(users)
         for(let i = 0; i < users.length; i++){
-            let taken_dates = await supabase.from('dates').select('date').match({user_id: users[i].user_id})
+            const {data, error} = await supabase.from('dates').select('date').match({user_id: users[i].user_id})
+            let taken_dates = data;
             for(let k = 0; k < taken_dates.length; k++){
-                let curr = new Date(taken_dates)
+                var curr = new Date(taken_dates[k].date)
                 for(let j = 0; j < dateArr.length; j++){
-                    if(curr !== dateArr[j])
-                        avail.push(curr)
+                    console.log('hoo')
+                    if(dateArr[j].getTime() == curr.getTime()){
+                        dateArr.splice(j,1)
+                        console.log('hey')
+                    }
+                        
                 }
             }
         }
 
-        console.log(avail)
-        alert(avail)
-        return avail;
+        alert(dateArr)
+        return dateArr;
     }
 
 
